@@ -1,0 +1,105 @@
+<div *ngIf="componentData | async as data">
+  <div
+    fxLayout="column"
+    fxLayoutAlign="center center"
+    style="padding-bottom: 1em"
+  >
+    <div class="mat-title">Tareas</div>
+    <div class="mat-caption">Integración http {{ data.useHttp }}</div>
+    <div class="mat-caption">Usuario: {{ data.userId }}</div>
+  </div>
+
+  <mat-card fxLayout="column" fxLayoutAlign="center center">
+    <mat-card-header>
+      <mat-card-title> Nueva Tarea </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <ng-container
+        *ngTemplateOutlet="form; context: { taskId: '', userId: data.userId, useHttp: data.useHttp }"
+      ></ng-container>
+    </mat-card-content>
+  </mat-card>
+  <div fxLayout="row wrap" fxLayoutAlign="center">
+    <div *ngIf="data.tasks.length === 0" style="padding: 1em 0em">
+      No hay Tareas para mostrar
+    </div>
+
+    <mat-card *ngFor="let task of data.tasks" style="margin: 0.5em">
+      <mat-card-header>
+        <mat-card-title>
+          <div fxLayout="row" fxLayoutAlign="center center">
+            <span>{{ task.title }}</span>
+            <mat-icon
+              *ngIf="task.status"
+              style="padding-left: 0.5em"
+              matTooltip="Completado"
+              matTooltipPosition="right"
+            >
+              check
+            </mat-icon>
+          </div>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="editTaskId$ | async as editId" fxFlex="auto">
+          <ng-container *ngIf="editId === task.id">
+            <ng-container
+              *ngTemplateOutlet="
+                form;
+                context: { taskId: task.id, userId: data.userId, useHttp: data.useHttp }
+              "
+            ></ng-container>
+          </ng-container>
+          <div *ngIf="editId !== task.id">
+            {{ task.description }}
+          </div>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button (click)="initEdit(task)">Editar</button>
+        <button mat-button (click)="deleteTask(task.id, data.useHttp)">Eliminar</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>
+
+<ng-template #form let-taskId="taskId" let-userId="userId" let-useHttp="useHttp">
+  <form [formGroup]="formTask" fxLayout="column" fxLayoutAlign="center center">
+    <mat-form-field>
+      <mat-label>Task Name</mat-label>
+      <input
+        matInput
+        placeholder="Titulo"
+        formControlName="title"
+        type="text"
+        required
+      />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Desciption</mat-label>
+      <textarea
+        matInput
+        [cdkTextareaAutosize]="true"
+        placeholder="Desciption"
+        formControlName="description"
+        type="text"
+        required
+      ></textarea>
+    </mat-form-field>
+    <mat-checkbox *ngIf="taskId" formControlName="status" color="primary">
+      Completado
+    </mat-checkbox>
+
+    <div>
+      <button mat-button color="warn" (click)="editTaskId.next('-')">
+        Cancelar
+      </button>
+      <button
+        mat-button
+        (click)="taskId ? updateTask(taskId, userId, useHttp) : addTask(userId, useHttp)"
+      >
+        {{ taskId ? "Guardar" : "Agregar" }}
+      </button>
+    </div>
+  </form>
+</ng-template>

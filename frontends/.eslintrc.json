@@ -1,0 +1,109 @@
+{
+  "extends": "eslint:recommended",
+  "rules": {
+    "align": ["error", "parameters", "statements"],
+    "array-type": 0,
+    "arrow-return-shorthand": "error",
+    "curly": "error",
+    "deprecation": "warning",
+    "eofline": "error",
+    "import-blacklist": ["error", "rxjs/Rx"],
+    "import-spacing": "warning",
+    "indent": ["error"],
+    "max-classes-per-file": "warning",
+    "max-line-length": ["error", 140],
+    "member-ordering": [
+      "error",
+      {
+        "order": ["static-field", "instance-field", "static-method", "instance-method"]
+      }
+    ],
+    "no-any": "error",
+    "no-console": ["error", { "allow": ["debug", "info", "time", "timeEnd", "trace"] }],
+    "no-inferrable-types": ["error", "ignore-params"],
+    "no-non-null-assertion": "error",
+    "no-redundant-jsdoc": "error",
+    "no-switch-case-fall-through": "error",
+    "no-var-requires": 0,
+    "object-literal-key-quotes": ["error", "as-needed"],
+    "quotemark": ["error", "single"],
+    "semicolon": ["error", "always", "ignore-bound-class-methods"],
+    "space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "never",
+        "asyncArrow": "always",
+        "named": "never"
+      }
+    ],
+    "typedef-whitespace": [
+      "error",
+      {
+        "call-signature": "nospace",
+        "index-signature": "nospace",
+        "parameter": "nospace",
+        "property-declaration": "nospace",
+        "variable-declaration": "nospace"
+      },
+      {
+        "call-signature": "onespace",
+        "index-signature": "onespace",
+        "parameter": "onespace",
+        "property-declaration": "onespace",
+        "variable-declaration": "onespace"
+      }
+    ],
+    "variable-name": ["error", "ban-keywords", "check-format", "allow-pascal-case"],
+    "whitespace": [
+      "error",
+      "check-branch",
+      "check-decl",
+      "check-operator",
+      "check-separator",
+      "check-type",
+      "check-typecast"
+    ],
+    "component-class-suffix": "error",
+    "contextual-lifecycle": "error",
+    "directive-class-suffix": "error",
+    "no-conflicting-lifecycle": "error",
+    "no-host-metadata-property": "error",
+    "no-input-rename": "error",
+    "no-inputs-metadata-property": "error",
+    "no-output-native": "error",
+    "no-output-on-prefix": "error",
+    "no-output-rename": "error",
+    "no-outputs-metadata-property": "error",
+    "template-banana-in-box": "error",
+    "template-no-negated-async": "error",
+    "use-lifecycle-interface": "error",
+    "use-pipe-transform-interface": "error",
+    "adjacent-overload-signatures": "error",
+    "ban-comma-operator": "error",
+    "no-namespace": "error",
+    "no-parameter-reassignment": "error",
+    "no-reference": "error",
+    "no-unnecessary-type-assertion": "error",
+    "label-position": "error",
+    "no-conditional-assignment": "error",
+    "no-construct": "error",
+    "no-duplicate-super": "error",
+    "no-duplicate-switch-case": "error",
+    "no-duplicate-variable": ["error", "check-parameters"],
+    "no-shadowed-variable": "error",
+    "no-empty": ["error", { "allowEmptyCatch": true }],
+    "no-floating-promises": "error",
+    "no-invalid-this": "error",
+    "no-string-throw": "error",
+    "no-unsafe-finally": "error",
+    "no-duplicate-imports": "error",
+    "no-empty-interface": "warning",
+    "no-import-side-effect": "warning",
+    "no-var-keyword": "warning",
+    "triple-equals": "warning",
+    "prefer-for-of": "warning",
+    "unified-signatures": "warning",
+    "prefer-const": 1,
+    "trailing-comma": "warning"
+  }
+}
