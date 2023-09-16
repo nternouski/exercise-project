@@ -1,21 +1,25 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { createDocPath,  getDocument, updateDoc } from "src/services/database";
+import { createDocPath,  getDocument, updateDoc } from "@services";
 import { Task, getTaskCollection, getTaskPath } from "@models";
 import { RequestPostTask, ResponseTask } from "@payloads";
 
 const router = Router();
 
-router.get(":id", async (req: Request, res: Response, next: NextFunction) => {
+router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
-    const task = await getDocument(getTaskPath(id));
-    res.status(200).json({ task });
+    try {
+      const task = await getDocument(getTaskPath(id));
+      return res.status(200).json({ task });
+    } catch (error) {
+      return res.status(404).json({ message: "Task not found" });
+    }
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
-router.post("", async (req: Request<{}, ResponseTask, RequestPostTask>, res: Response, next: NextFunction) => {
+router.post("/", async (req: Request<{}, ResponseTask, RequestPostTask>, res: Response, next: NextFunction) => {
   try {
     const task = req.body.task;
     if (task.userId !== req.locals.userId) {
@@ -28,7 +32,7 @@ router.post("", async (req: Request<{}, ResponseTask, RequestPostTask>, res: Res
   }
 });
 
-router.patch(":id", async (req: Request, res: Response, next: NextFunction) => {
+router.patch("/:id", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
 
@@ -43,7 +47,7 @@ router.patch(":id", async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-router.delete(":id", async (req: Request, res: Response, next: NextFunction) => {
+router.delete("/:id", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
     const task = await getDocument<Task>(getTaskPath(id));

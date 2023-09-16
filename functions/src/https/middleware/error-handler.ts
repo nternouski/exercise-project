@@ -13,7 +13,7 @@ export class ApplicationError extends Error {
     // tslint:disable-next-line:no-any
     const stack = (errorObject as any)?.error?.stack || (errorObject as any)?.stack;
     this.json = JSON.stringify({ ...errorObject, stack, publicMessage });
-    if (process.env.NODE_ENV === 'test') console.log(this.json);
+    console.log(this.json);
   }
 
 }
