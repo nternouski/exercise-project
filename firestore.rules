@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isEmailValid() {
+      return request.resource.data.email.matches('^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$') == true;
+    }
+
+    function isOwner(uid) {
+      return request.auth.uid == uid;
+    }
+
+    match /tasks/{taskId} {
+      allow read: if isOwner(resource.data.userId);
+      allow write: if isOwner(request.resource.data.userId);
+    }
+    
+    match /users/{userId} {
+      allow read, write: if isEmailValid();
+    }
+  }
+}

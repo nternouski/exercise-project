@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@models": ["../shared/models"],
+      "@payloads": ["../shared/payloads"],
+      "@services": ["./src/services"],
+      "@middleware": ["./src/https/middleware"]
+    },
+    "outDir": "lib",
+    "sourceMap": false,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "target": "es2019",
+    "lib": ["es2019", "es2020.bigint", "es2020.string", "es2020.symbol.wellknown"],
+    "experimentalDecorators": true,
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true
+  },
+  "compileOnSave": true,
+  "include": ["src"],
+  "files": ["src/https/middleware/resquest.d.ts"]
+}
