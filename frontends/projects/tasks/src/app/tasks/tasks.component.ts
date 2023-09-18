@@ -1,14 +1,14 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 
-import { DataService } from '@services/data.service';
-import { ApiService } from '@services/api.service';
-import { Task } from '@models';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { UserService } from '@services/user.service';
-import { BehaviorSubject, combineLatest } from 'rxjs';
-import { shareReplay, switchMap, map } from 'rxjs/operators';
-import { BaseObject } from '@models';
-import { ActivatedRoute } from '@angular/router';
+import { DataService } from "@services/data.service";
+import { ApiService } from "@services/api.service";
+import { Task } from "@models";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { UserService } from "@services/user.service";
+import { BehaviorSubject, combineLatest } from "rxjs";
+import { shareReplay, switchMap, map } from "rxjs/operators";
+import { BaseObject } from "@models";
+import { ActivatedRoute } from "@angular/router";
 
 interface TaskForm {
   title: FormControl<string>;
@@ -17,14 +17,14 @@ interface TaskForm {
 }
 
 @Component({
-  selector: 'tasks-app',
-  templateUrl: './tasks.component.html',
-  styleUrls: ['./tasks.component.scss'],
+  selector: "tasks-app",
+  templateUrl: "./tasks.component.html",
+  styleUrls: ["./tasks.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TasksComponent {
   public useHttp = this.route.queryParams
-    .pipe(map(({ useHttp }) => useHttp === 'true'))
+    .pipe(map(({ useHttp }) => useHttp === "true"))
     .pipe(shareReplay(1));
 
   public componentData = combineLatest([
@@ -39,10 +39,10 @@ export class TasksComponent {
     shareReplay(1)
   );
 
-  public editTaskId = new BehaviorSubject<string>('-');
+  public editTaskId = new BehaviorSubject<string>("-");
   public editTaskId$ = this.editTaskId.asObservable().pipe(shareReplay(1));
 
-  private resetTask = { title: '', description: '', status: false };
+  private resetTask = { title: "", description: "", status: false };
   public formTask = new FormGroup<TaskForm>({
     title: new FormControl(this.resetTask.title, {
       nonNullable: true,
@@ -89,6 +89,7 @@ export class TasksComponent {
       ).then(() => this.formTask.setValue(this.resetTask));
     }
   }
+
   public updateTask(taskId: string, userId: string, useHttp: boolean) {
     if (this.formTask.valid) {
       const task: Task & { id: string } = {
@@ -103,12 +104,15 @@ export class TasksComponent {
       (useHttp
         ? this.apiService.updateTask(taskId, { task })
         : this.dataService.updateTask(task)
-      ).then(() => this.formTask.setValue(this.resetTask));
+      ).then(() => {
+        this.editTaskId.next("-");
+        this.formTask.setValue(this.resetTask);
+      });
     }
   }
 
   public deleteTask(taskId: string, useHttp: boolean) {
-    if (!confirm('Are you sure you want to delete this task?')) return;
+    if (!confirm("Are you sure you want to delete this task?")) return;
     useHttp
       ? this.apiService.deleteTask(taskId)
       : this.dataService.deleteTask(taskId);

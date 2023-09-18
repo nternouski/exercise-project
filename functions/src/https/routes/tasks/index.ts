@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { createDocPath,  getDocument, updateDoc } from "@services";
+import { createDocPath, getDocument, updateDoc } from "@services";
 import { Task, getTaskCollection, getTaskPath } from "@models";
-import { RequestPostTask, ResponseTask } from "@payloads";
+import { RequestPatchTask, RequestPostTask, ResponseTask } from "@payloads";
 
 const router = Router();
 
@@ -19,46 +19,64 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-router.post("/", async (req: Request<{}, ResponseTask, RequestPostTask>, res: Response, next: NextFunction) => {
-  try {
-    const task = req.body.task;
-    if (task.userId !== req.locals.userId) {
-      return res.status(401).json({ success: false });
+router.post(
+  "/",
+  async (
+    req: Request<{}, ResponseTask, RequestPostTask>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const task = req.body.task;
+      if (task.userId !== req.locals.userId) {
+        return res.status(401).json({ success: false });
+      }
+      await createDocPath(getTaskCollection(), task);
+      return res.status(201).json({ success: true });
+    } catch (error) {
+      return next(error);
     }
-    await createDocPath(getTaskCollection(), task);
-    return res.status(201).json({ success: true });
-  } catch (error) {
-    return next(error);
   }
-});
+);
 
-router.patch("/:id", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const id = req.params.id;
+router.patch(
+  "/:id",
+  async (
+    req: Request<{ id: string }, ResponseTask, RequestPatchTask>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const id = req.params.id;
 
-    const task = await getDocument<Task>(getTaskPath(id));
-    if (task.userId !== req.locals.userId) {
-      return res.status(401).json({ success: false });
+      const task = await getDocument<Task>(getTaskPath(id));
+      if (task.userId !== req.locals.userId) {
+        return res.status(401).json({ success: false });
+      }
+      const toUpdate: Task = { ...task, ...req.body.task };
+      await updateDoc(getTaskPath(task.id), toUpdate, true);
+      return res.status(200).json({ success: true });
+    } catch (error) {
+      return next(error);
     }
-    await updateDoc(getTaskPath(task.id), task, true);
-    return res.status(200).json({ success: true });
-  } catch (error) {
-    return next(error);
   }
-});
+);
 
-router.delete("/:id", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const id = req.params.id;
-    const task = await getDocument<Task>(getTaskPath(id));
-    if (task.userId !== req.locals.userId) {
-      return res.status(401).json({ success: false });
+router.delete(
+  "/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = req.params.id;
+      const task = await getDocument<Task>(getTaskPath(id));
+      if (task.userId !== req.locals.userId) {
+        return res.status(401).json({ success: false });
+      }
+      await updateDoc(getTaskPath(task.id), { isActive: false }, true);
+      return res.status(200).json({ success: true });
+    } catch (error) {
+      return next(error);
     }
-    await updateDoc(getTaskPath(task.id), { isActive: false }, true);
-    return res.status(200).json({ success: true });
-  } catch (error) {
-    return next(error);
   }
-});
+);
 
 export const listener = router;

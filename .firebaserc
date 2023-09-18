@@ -1,7 +1,16 @@
 {
   "projects": {
-    "default": "test-app-27472"
+    "default": "test-app-27472",
+    "test-app": "test-app-27472"
   },
-  "targets": {},
+  "targets": {
+    "test-app-27472": {
+      "hosting": {
+        "tasks": [
+          "test-tasks-app"
+        ]
+      }
+    }
+  },
   "etags": {}
 }

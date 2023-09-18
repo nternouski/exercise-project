@@ -1,4 +1,7 @@
 @import "~reset-css";
+@import "@angular/material/theming";
+
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
 
 router-outlet + * {
   flex: 1 0 auto;
