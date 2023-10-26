@@ -8,6 +8,9 @@
       "hosting": {
         "tasks": [
           "test-tasks-app"
+        ],
+        "imgix": [
+          "test-imgix"
         ]
       }
     }

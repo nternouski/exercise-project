@@ -4,7 +4,7 @@
     "build": "webpack-cli --mode=production",
     "watch-serve": "concurrently -k -p \"[{name}]\" -n \"Watch,Serve\" -c \"cyan.bold,green.bold\"  \"npm run watch\" \"npm run serve\"",
     "watch": "webpack-cli --watch --mode=development",
-    "serve": "firebase emulators:start --only=functions,firestore,database,hosting,auth",
+    "serve": "firebase emulators:start --only=functions,storage,firestore,database,hosting,auth",
     "test-command": "cross-env NODE_ENV=test npm run build && eslint -c .eslintrc.json && ts-mocha -r tsconfig-paths/register -p tsconfig.json src/**/*.test.ts --timeout 10000",
     "test-emulator": "firebase emulators:exec --only=functions,firestore,database,auth \"npm run test-command\" && npm run kill-emulator-process",
     "test": "",

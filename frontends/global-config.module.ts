@@ -11,12 +11,14 @@ import {
   provideFirestore,
   connectFirestoreEmulator,
 } from "@angular/fire/firestore";
-
 import { provideAuth, getAuth, connectAuthEmulator } from "@angular/fire/auth";
-
 import {
-  MatPaginatorModule,
-} from "@angular/material/paginator";
+  getStorage,
+  provideStorage,
+  //  connectStorageEmulator
+} from "@angular/fire/storage";
+
+import { MatPaginatorModule } from "@angular/material/paginator";
 
 import { UserService } from "@services/user.service";
 
@@ -48,6 +50,14 @@ import { environment } from "@environment";
       if (!!environment.localFirebase.auth)
         connectAuthEmulator(auth, environment.localFirebase.auth);
       return auth;
+    }),
+    provideStorage(() => {
+      const storage = getStorage(getApp());
+      // const localStorage: { host: string | null; port: number | null } = environment.localFirebase.storage;
+      // if (!!localStorage.host && !!localStorage.port) {
+      //   connectStorageEmulator(storage, localStorage.host, localStorage.port);
+      // }
+      return storage;
     }),
   ],
   exports: [

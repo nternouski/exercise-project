@@ -12,6 +12,12 @@
     },
     {
       "path": "./projects/tasks/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/imgix/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/imgix/tsconfig.spec.json"
     }
   ]
 }

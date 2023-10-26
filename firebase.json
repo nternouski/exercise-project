@@ -18,6 +18,15 @@
         { "source": "/api/**", "function": "api" },
         { "source": "**", "destination": "/index.html" }
       ]
+    },
+    {
+      "target": "imgix",
+      "public": "./frontends/dist/imgix",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        { "source": "/api/**", "function": "api" },
+        { "source": "**", "destination": "/index.html" }
+      ]
     }
   ],
   "storage": {

@@ -1,0 +1,150 @@
+<div fxLayout="column" fxLayoutAlign="center center">
+  <div class="mat-title">IMGIX</div>
+
+  <form
+    [formGroup]="formTransformation"
+    fxLayout="column"
+    fxLayoutAlign="center center"
+  >
+    <div fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="1em">
+      <mat-form-field fxFlex="auto">
+        <mat-select placeholder="Imagen" formControlName="image">
+          <mat-option *ngFor="let image of images | async" [value]="image.url">
+            {{ image.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <input *ngIf="imageFromGCP" type="file" (change)="onFileChange($event)" />
+    </div>
+    <div fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="1em">
+      <mat-form-field fxFlex="auto">
+        <mat-select placeholder="Param" formControlName="param">
+          <mat-option *ngFor="let param of params" [value]="param">
+            {{ param.title }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <ng-container *ngIf="allowedValues | async as input">
+        <mat-form-field
+          *ngIf="input.type !== 'slider' && input.type !== 'boolean'"
+          fxFlex="auto"
+        >
+          <mat-select
+            *ngIf="input.type === 'select'"
+            placeholder="Valores"
+            formControlName="value"
+          >
+            <mat-option *ngFor="let value of input.values" [value]="value">
+              {{ value }}
+            </mat-option>
+          </mat-select>
+          <input
+            *ngIf="input.type === 'number'"
+            matInput
+            type="number"
+            placeholder="Valores"
+            formControlName="value"
+          />
+        </mat-form-field>
+
+        <mat-slider
+          *ngIf="input.type === 'slider'"
+          tickInterval="1"
+          thumbLabel
+          (input)="setValue($event.value, input.min)"
+          [value]="formTransformation.controls.value.value"
+          [min]="input.min"
+          [max]="input.max"
+        ></mat-slider>
+        <mat-slide-toggle
+          *ngIf="input.type === 'boolean'"
+          formControlName="value"
+        >
+          Aplicar
+        </mat-slide-toggle>
+      </ng-container>
+      <button
+        mat-button
+        color="primary"
+        *ngIf="changes$ | async as c"
+        (click)="addParam(formTransformation, c)"
+      >
+        Agregar
+      </button>
+    </div>
+    <mat-slide-toggle formControlName="allowLiveChange">
+      Ver Resultado
+    </mat-slide-toggle>
+  </form>
+
+  <ng-container *ngIf="componentData | async as data; else NotInit">
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <img
+        fxFlex.gt-xs="50"
+        ixImg
+        [path]="data.image"
+        [imgixParams]="data.params"
+      />
+    </div>
+
+    <button
+      mat-raised-button
+      color="primary"
+      style="margin-top: 1em"
+      [cdkCopyToClipboard]="data.downloadUrl"
+    >
+      Copiar Link Imagen
+    </button>
+  </ng-container>
+</div>
+
+<div fxLayout="row" fxLayoutAlign="center center">
+  <mat-card *ngIf="changes$ | async as c" fxFlex.gt-xs="60">
+    <mat-card-header>
+      <mat-card-title>Historial de Cambios</mat-card-title>
+    </mat-card-header>
+    <mat-card-content fxLayout="column" style="padding: 1em">
+      <div fxLayout="row wrap" fxLayoutAlign="center center">
+        <div *ngIf="c.history.length === 0">No hay Cambios</div>
+        <ng-container
+          *ngFor="let change of c.history; let index = index; let last = last"
+        >
+          <div [ngClass]="{ 'change-budget': true, hidden: c.current < index }">
+            <strong>{{ change.param }}:</strong> {{ change.value }}
+          </div>
+          <mat-icon
+            *ngIf="!last"
+            [ngStyle]="{ color: c.current < index ? 'lightgray' : 'black' }"
+          >
+            arrow_forward
+          </mat-icon>
+        </ng-container>
+      </div>
+    </mat-card-content>
+
+    <mat-divider [vertical]="false"></mat-divider>
+    <mat-card-actions fxLayoutAlign="space-between center">
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="c.current === -1"
+        (click)="back(c)"
+      >
+        Deshacer
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="c.current === c.history.length - 1"
+        (click)="forward(c)"
+      >
+        Rehacer
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
+
+<ng-template #NotInit>
+  <div style="padding: 2em">Seleccione una imagen para empezar</div>
+</ng-template>
