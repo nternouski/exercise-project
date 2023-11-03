@@ -15,7 +15,7 @@
         </mat-select>
       </mat-form-field>
 
-      <input *ngIf="imageFromGCP" type="file" (change)="onFileChange($event)" />
+      <input type="file" (change)="onFileChange($event)" />
     </div>
     <div fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="1em">
       <mat-form-field fxFlex="auto">
@@ -78,21 +78,16 @@
     </mat-slide-toggle>
   </form>
 
-  <ng-container *ngIf="componentData | async as data; else NotInit">
+  <ng-container *ngIf="componentData | async as url; else NotInit">
     <div fxLayout="row" fxLayoutAlign="center center">
-      <img
-        fxFlex.gt-xs="50"
-        ixImg
-        [path]="data.image"
-        [imgixParams]="data.params"
-      />
+      <img [src]="url" style="width: 100%; max-height: 30em;" />
     </div>
 
     <button
       mat-raised-button
       color="primary"
       style="margin-top: 1em"
-      [cdkCopyToClipboard]="data.downloadUrl"
+      [cdkCopyToClipboard]="url"
     >
       Copiar Link Imagen
     </button>

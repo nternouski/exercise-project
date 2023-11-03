@@ -12,7 +12,7 @@ export class StorageService {
 
   public listAll(path: string) {
     return listAll(ref(this.storage, path)).then((res) =>
-      res.items.map((i) => ({ name: i.name, url: i.fullPath }))
+      res.items.map((i) => ({ name: i.name, url: `https://test-app-img.imgix.net/${i.fullPath.split("/")[1]}` }))
     );
   }
 

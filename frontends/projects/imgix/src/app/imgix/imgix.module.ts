@@ -20,15 +20,6 @@ import { ImgixComponent } from "./imgix.component";
 import { ImgixRoutingModule } from "./imgix-routing.module";
 import { ReactiveFormsModule } from "@angular/forms";
 
-import { ImgixAngularModule } from "@imgix/angular";
-
-const domains = [
-  "assets.imgix.net",
-  "test-app-img.imgix.net",
-];
-
-export const domainSelected = domains[0];
-
 @NgModule({
   declarations: [ImgixComponent],
   imports: [
@@ -48,10 +39,6 @@ export const domainSelected = domains[0];
     MatSliderModule,
     MatSlideToggleModule,
     ClipboardModule,
-    ImgixAngularModule.forRoot({
-      domain: domainSelected,
-      defaultImgixParams: { auto: "format,compress" },
-    }),
   ],
 })
 export class ImgixModule {}

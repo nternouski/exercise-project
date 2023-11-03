@@ -8,9 +8,6 @@ import { ImageService } from "@services/image.service";
 import { StorageService } from "@services/storage.service";
 
 import { Param, params } from "./params";
-import { domainSelected } from "./imgix.module";
-
-import { path } from "@models";
 
 interface Form {
   image: FormControl<string>;
@@ -36,20 +33,10 @@ export const isValid = <T>(a: T | null | undefined): a is T =>
 export class ImgixComponent {
   public readonly params = params;
 
-  public readonly imageFromGCP = domainSelected !== "assets.imgix.net";
-  public images = this.imageFromGCP
-    ? this.storageService.listAll("imgix").then((res) =>
-        res.map((file) => ({
-          ...file,
-          url: file.url.split("/")[1],
-        }))
-      )
-    : this.imageService.getImages().then((res) =>
-        res.map((file) => ({
-          ...file,
-          url: file.url.split("https://assets.imgix.net")[1],
-        }))
-      );
+  public images = combineLatest([
+    this.storageService.listAll("imgix"),
+    this.imageService.getImages(),
+  ]).pipe(map(([fromStorage, assets]) => [...fromStorage, ...assets]));
 
   public changes = new BehaviorSubject<{ history: Change[]; current: number }>({
     history: [],
@@ -82,26 +69,25 @@ export class ImgixComponent {
   ]).pipe(
     filter(([form]) => !!form.image),
     map(([{ image, param, value, allowLiveChange }, changes]) => {
-      const currentChanges = changes.history.slice(0, changes.current + 1);
+      let currentChanges = changes.history.slice(0, changes.current + 1);
       if (allowLiveChange && param && value) {
         currentChanges.push({ param: param.value, value: value });
       }
-      return {
-        params: currentChanges.reduce(
-          (acc, change) => ({
-            ...acc,
-            [change.param]:
-              change.param === "rot"
-                ? Number(acc["rot"] || 0) + change.value
-                : change.value,
-          }),
-          {} as { [k: string]: string }
-        ),
-        downloadUrl: `${path.join(domainSelected, image!)}?${currentChanges
-          .map((change) => `${change.param}=${change.value}`)
-          .join("&")}`,
-        image: image!,
-      };
+      currentChanges = currentChanges.reduce<Change[]>((acc, change) => {
+        if (change.param === "rot") {
+          const currentRotIdx = acc.findIndex((c) => c.param === "rot");
+          if (currentRotIdx !== -1) {
+            acc[currentRotIdx].value += change.value;
+            return acc;
+          }
+        }
+        acc.push(change);
+        return acc;
+      }, []);
+      console.log(image);
+      return `${image}?${currentChanges
+        .map((change) => `${change.param}=${change.value}`)
+        .join("&")}`;
     }),
     shareReplay(1)
   );
